@@ -1,73 +1,92 @@
 package com.carrental.service;
 
 import java.time.LocalDate;
-
-import java.util.*;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.carrental.model.Car;
 import com.carrental.model.Customer;
 import com.carrental.model.Rental;
+import com.carrental.repository.CarRepository;
+import com.carrental.repository.CustomerRepository;
+import com.carrental.repository.RentalRepository;
 import com.carrental.exception.CarNotAvailableException;
+import com.carrental.exception.CarNotFoundException;
+import com.carrental.exception.CustomerNotFoundException;
 import com.carrental.exception.RentalNotFoundException;
 
 @Service
 public class RentalService {
 
-    private HashMap<Integer, Rental> rentals = new HashMap<>();
-    public void addRental(Rental rental) {
-        rentals.put(rental.getId(), rental);
+    private RentalRepository rentalRepository;
+    private CarRepository carRepository;
+    private CustomerRepository customerRepository;
+
+    public RentalService(RentalRepository rentalRepository, CarRepository carRepository,CustomerRepository customerRepository) {
+        this.rentalRepository = rentalRepository;
+        this.carRepository = carRepository;
+        this.customerRepository=customerRepository;
     }
-    public void rentCar(int rentalId, Customer customer, Car car,
+
+    public void addRental(Rental rental) {
+        rentalRepository.save(rental);
+    }
+
+    public void rentCar(int rentalId, int customerId, int carId,
             LocalDate startDate, LocalDate endDate) {
+    	Car car = carRepository.findById(carId)
+    	        .orElseThrow(() ->
+    	            new CarNotFoundException("Car not found with ID: " + carId)
+    	        );
+    	
+        if (!car.isAvailable()) {
+            throw new CarNotAvailableException("Car is not available to rent");
+        }
+        Customer customer=customerRepository.findById(customerId).orElseThrow(()->new CustomerNotFoundException("Customer not found with ID: " + customerId));
+        
+        long days = endDate.toEpochDay() - startDate.toEpochDay();
 
-if (!car.isAvailable()) {
-throw new CarNotAvailableException("Car is not available to rent");
-}
+        double totalAmount = days * car.getPricePerDay();
 
-long days = endDate.toEpochDay() - startDate.toEpochDay();
+        Rental rental = new Rental(
+                rentalId,
+                customer,
+                car,
+                startDate,
+                endDate,
+                totalAmount,
+                "ACTIVE"
+        );
 
-double totalAmount = days * car.getPricePerDay();
+        rentalRepository.save(rental);
 
-Rental rental = new Rental(
-rentalId,
-customer,
-car,
-startDate,
-endDate,
-totalAmount,
-"ACTIVE"
-);
+        car.setAvailable(false);
+        carRepository.save(car);
+    }
 
-rentals.put(rentalId, rental);
-
-car.setAvailable(false);
-
-System.out.println("Car rented successfully.");
-}
     public void returnCar(int rentalId) {
 
-        Rental rental = rentals.get(rentalId);
-
-        if (rental == null) {
-            throw new RentalNotFoundException(
-                "Rental not found with ID: " + rentalId
-            );
-        }
+        Rental rental = getRental(rentalId);
 
         Car car = rental.getCar();
         car.setAvailable(true);
+        carRepository.save(car);
 
-        System.out.println("Car returned successfully.");
         rental.setStatus("RETURNED");
-    }
-    public Rental getRental(int rentalId) {
-        return rentals.get(rentalId);
-    }
-    
-    public List<Rental> getAllRentals() {
-        return new ArrayList<>(rentals.values());
+        rentalRepository.save(rental);
     }
 
+    public Rental getRental(int rentalId) {
+        return rentalRepository.findById(rentalId)
+                .orElseThrow(() ->
+                    new RentalNotFoundException(
+                        "Rental with id " + rentalId + " not found"
+                    )
+                );
+    }
+
+    public List<Rental> getAllRentals() {
+        return rentalRepository.findAll();
+    }
 }

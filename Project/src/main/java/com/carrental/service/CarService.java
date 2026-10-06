@@ -1,4 +1,6 @@
 package com.carrental.service;
+import com.carrental.repository.CarRepository;
+
 import org.springframework.stereotype.Service;
 import java.util.*;
 import com.carrental.model.Car;
@@ -7,62 +9,51 @@ import com.carrental.exception.CarNotAvailableException;
 
 @Service
 public class CarService {
-	private HashMap<Integer,Car> cars=new HashMap<>();
-	public CarService() {
+	private CarRepository carRepository;
+	
+		public CarService(CarRepository carRepository) {
 
-        Car car1 = new Car(101, "Toyota", "Camry", 2500, true);
-        Car car2 = new Car(102, "Honda", "City", 1800, true);
-        Car car3 = new Car(103, "Hyundai", "Creta", 2200, true);
-
-        addCar(car1);
-        addCar(car2);
-        addCar(car3);
+        this.carRepository=carRepository;
     }
 	
 	public void addCar(Car car) {
-		cars.put(car.getId(),car);
+		carRepository.save(car);
 	}
 	public Car getCar(int id) {
-	    Car car = cars.get(id);
-
-	    if (!cars.containsKey(id)) {
-	        throw new CarNotFoundException("Car not found with ID: " + id);
-	    }
-
-	    return car;
+		return carRepository.findById(id)
+	            .orElseThrow(() ->
+	                new CarNotFoundException("Car not found with ID: " + id));
 	}
+	
 	public List<Car> getAllCars(){
-		return new ArrayList<>(cars.values());
-	}
+		return carRepository.findAll();
+		}
+	
 	public void removeCar(int id) {
-		if(cars.containsKey(id)) {
-			cars.remove(id);
-			System.out.print("Car "+ id+ " removed");	
+		if(!carRepository.existsById(id)) {
+			throw new CarNotFoundException("Car not found with ID: " + id);	
 		}
-		else {
-			System.out.print("Car not found");
-		}
+		
+			carRepository.deleteById(id);
+		
 	}
+	
 	public void rentCar(int carId) {
 
 	    Car car = getCar(carId);
 
-	    if (car != null && car.isAvailable()) {
-	        car.setAvailable(false);
-	        System.out.println("Car rented successfully.");
-	    } else {
-	        throw new CarNotAvailableException("Car is not available");
+	    if(!car.isAvailable()) {
+	    	throw new CarNotAvailableException("Car with id "+carId+" is not available");
 	    }
+	    car.setAvailable(false);
+	    carRepository.save(car);
+	    
 	}
 	public void returnCar(int carId) {
 
-	    Car car = cars.get(carId);
-
-	    if (car != null) {
-	        car.setAvailable(true);
-	        System.out.println("Car returned successfully.");
-	    } else {
-	        System.out.println("Car not found.");
-	    }
+	    Car car = getCar(carId);
+	    car.setAvailable(true);
+	    carRepository.save(car);
+	  
 	}
 }

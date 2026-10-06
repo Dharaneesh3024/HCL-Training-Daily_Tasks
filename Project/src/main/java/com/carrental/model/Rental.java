@@ -1,15 +1,23 @@
 package com.carrental.model;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 
+@Entity
 public class Rental {
+	@Id
 	private int id;
+	@ManyToOne
 	private Customer customer;
+	@ManyToOne
 	private Car car;
 	private LocalDate startDate;
 	private LocalDate endDate;
 	private double totalAmount;
 	private String status="ACTIVE";
+	public Rental() {
+	}
 	public String getStatus() {
 		return status;
 	}

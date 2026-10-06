@@ -1,11 +1,20 @@
 package com.carrental.model;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
+@Entity
 public class Car {
+	
+	@Id
 	private int id;
+	
 	private String brand;
 	private String model;
     private double pricePerDay;
     private boolean available;
+    
+    public Car() {
+    }
     
 	public Car(int id, String brand, String model, double pricePerDay, boolean available) {
 		super();

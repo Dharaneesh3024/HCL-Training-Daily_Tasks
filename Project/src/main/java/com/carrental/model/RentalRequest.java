@@ -1,17 +1,18 @@
 package com.carrental.model;
-
 import java.time.LocalDate;
 
 public class RentalRequest {
 
     private int rentalId;
-    private Customer customer;
-    private Car car;
+    private int customerId;
+    private int carId;
     private LocalDate startDate;
     private LocalDate endDate;
-
+    
+       
     public RentalRequest() {
     }
+   
 
     public int getRentalId() {
         return rentalId;
@@ -21,20 +22,20 @@ public class RentalRequest {
         this.rentalId = rentalId;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public int getCustomerId() {
+        return customerId;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
-    public Car getCar() {
-        return car;
+    public int getCarId() {
+        return carId;
     }
 
-    public void setCar(Car car) {
-        this.car = car;
+    public void setCarId(int carId) {
+        this.carId = carId;
     }
 
     public LocalDate getStartDate() {

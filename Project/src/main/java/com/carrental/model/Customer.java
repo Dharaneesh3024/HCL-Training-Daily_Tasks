@@ -1,10 +1,18 @@
 package com.carrental.model;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
+@Entity
 public class Customer {
+	@Id
 	private int id;
+	
 	private String name;
 	private String email;
 	private String phone;
+	
+	public Customer() {
+	}
 	public Customer(int id, String name, String email, String phone) {
 		super();
 		this.id = id;
