@@ -1,14 +1,21 @@
 package com.carrental.model;
 import jakarta.persistence.Entity;
+
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 public class Customer {
 	@Id
 	private int id;
 	
+	@NotBlank(message="Name field should not be empty")
 	private String name;
+	@Email(message="Email format should be followed")
+	@NotBlank(message="Email field is mandatory to be filled")
 	private String email;
+	@NotBlank(message="phone should not be empty")
 	private String phone;
 	
 	public Customer() {

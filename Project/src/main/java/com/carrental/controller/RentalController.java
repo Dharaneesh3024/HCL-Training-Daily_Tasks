@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.carrental.model.Rental;
 import com.carrental.model.RentalRequest;
 import com.carrental.service.RentalService;
+
+import jakarta.validation.Valid;
+
 //import java.time.LocalDate;
 import org.springframework.web.bind.annotation.RequestBody;
 //import com.carrental.model.Car;
@@ -27,7 +30,7 @@ public class RentalController {
 		return rentalService.getAllRentals();
 	}
 	@PostMapping("api/rentals")
-	public void createRental(@RequestBody RentalRequest request) {
+	public void createRental(@Valid @RequestBody RentalRequest request) {
 		rentalService.rentCar(
 				request.getRentalId(),
 		        request.getCustomerId(),

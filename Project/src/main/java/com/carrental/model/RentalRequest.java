@@ -1,12 +1,20 @@
 package com.carrental.model;
 import java.time.LocalDate;
 
-public class RentalRequest {
+import jakarta.validation.constraints.*;
+import com.carrental.validation.ValidRentalDates;
 
+@ValidRentalDates
+public class RentalRequest {
+	
     private int rentalId;
+	@Positive(message="Positive field")
     private int customerId;
+	@Positive(message="Positive field")
     private int carId;
+	@NotNull(message="Null values not allowed")
     private LocalDate startDate;
+	@NotNull(message="Null values not allowed")
     private LocalDate endDate;
     
        

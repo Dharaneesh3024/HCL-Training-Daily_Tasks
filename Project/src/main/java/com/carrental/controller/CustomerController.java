@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.carrental.model.Customer;
 import com.carrental.repository.CustomerRepository;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class CustomerController {
 	private CustomerRepository customerRepository;
@@ -18,7 +20,7 @@ public class CustomerController {
 	}
 	
 	@PostMapping("/api/customers")
-	public void addCustomer(@RequestBody Customer customer) {
+	public void addCustomer(@Valid @RequestBody Customer customer) {
 		customerRepository.save(customer);
 	}
 	
@@ -26,4 +28,5 @@ public class CustomerController {
 	public List<Customer> getCustomers() {
 		return customerRepository.findAll()	;
 		}
+	
 }

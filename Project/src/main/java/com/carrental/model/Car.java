@@ -1,6 +1,7 @@
 package com.carrental.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.*;
 
 @Entity
 public class Car {
@@ -8,9 +9,13 @@ public class Car {
 	@Id
 	private int id;
 	
+	@NotEmpty(message="Brand name should not be blank")
 	private String brand;
+	@NotBlank(message="Model name should not be blank")
 	private String model;
+	@Positive(message="Must be Positive")
     private double pricePerDay;
+    
     private boolean available;
     
     public Car() {

@@ -1,4 +1,9 @@
 package com.carrental.controller;
+import java.util.HashMap;
+
+import java.util.Map;
+
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -7,6 +12,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 
 import com.carrental.model.Car;
 import com.carrental.service.CarService;
+
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -18,6 +25,7 @@ public class CarController {
 	  public CarController(CarService carService) {
 	        this.carService = carService;
 	    }
+	  
 	@GetMapping("/api/cars")
 	public List<Car> getCars() {
 		return carService.getAllCars();
@@ -27,7 +35,7 @@ public class CarController {
 		return carService.getCar(id);
 	}
 	@PostMapping("/api/cars")
-	public void addCar(@RequestBody Car car) {
+	public void addCar(@Valid @RequestBody Car car) {
 		carService.addCar(car);
 	}
 	@DeleteMapping("/api/cars/{id}")

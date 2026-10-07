@@ -1,5 +1,5 @@
 package com.carrental.service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -33,6 +33,7 @@ public class RentalService {
         rentalRepository.save(rental);
     }
 
+    @Transactional
     public void rentCar(int rentalId, int customerId, int carId,
             LocalDate startDate, LocalDate endDate) {
     	Car car = carRepository.findById(carId)
