@@ -16,8 +16,8 @@ public class CarService {
         this.carRepository=carRepository;
     }
 	
-	public void addCar(Car car) {
-		carRepository.save(car);
+	public Car addCar(Car car) {
+		return carRepository.save(car);
 	}
 	public Car getCar(int id) {
 		return carRepository.findById(id)
