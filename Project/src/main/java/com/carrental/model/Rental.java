@@ -27,9 +27,8 @@ public class Rental {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public Rental(int id, Customer customer, Car car, LocalDate startDate, LocalDate endDate, double totalAmount,String status) {
+	public Rental( Customer customer, Car car, LocalDate startDate, LocalDate endDate, double totalAmount,String status) {
 		super();
-		this.id = id;
 		this.customer = customer;
 		this.car = car;
 		this.startDate = startDate;

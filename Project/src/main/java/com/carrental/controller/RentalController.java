@@ -3,6 +3,8 @@ package com.carrental.controller;
 import java.util.List;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,19 +31,22 @@ public class RentalController {
 	public List<Rental> getAllRentals(){
 		return rentalService.getAllRentals();
 	}
-	@PostMapping("api/rentals")
-	public void createRental(@Valid @RequestBody RentalRequest request) {
-		rentalService.rentCar(
-				request.getRentalId(),
+	@PostMapping("/api/rentals")
+	public ResponseEntity<Rental> createRental(@Valid @RequestBody RentalRequest request) {
+		Rental rental=rentalService.rentCar(
 		        request.getCustomerId(),
 		        request.getCarId(),
 		        request.getStartDate(),
 		        request.getEndDate());
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(rental);
+		
 	}
 	
 @PutMapping("/api/rentals/{id}/return")
-public void returnCar(@PathVariable int id) {
+public ResponseEntity<Void> returnCar(@PathVariable int id) {
 	rentalService.returnCar(id);
+	return ResponseEntity.noContent().build();
 }
 	
 }

@@ -34,7 +34,7 @@ public class RentalService {
     }
 
     @Transactional
-    public void rentCar(int rentalId, int customerId, int carId,
+    public Rental rentCar( int customerId, int carId,
             LocalDate startDate, LocalDate endDate) {
     	Car car = carRepository.findById(carId)
     	        .orElseThrow(() ->
@@ -51,7 +51,7 @@ public class RentalService {
         double totalAmount = days * car.getPricePerDay();
 
         Rental rental = new Rental(
-                rentalId,
+                
                 customer,
                 car,
                 startDate,
@@ -60,10 +60,12 @@ public class RentalService {
                 "ACTIVE"
         );
 
-        rentalRepository.save(rental);
 
         car.setAvailable(false);
         carRepository.save(car);
+        rental=rentalRepository.save(rental);
+        return rental;
+        
     }
 
     public void returnCar(int rentalId) {

@@ -7,7 +7,6 @@ import com.carrental.validation.ValidRentalDates;
 @ValidRentalDates
 public class RentalRequest {
 	
-    private int rentalId;
 	@Positive(message="Positive field")
     private int customerId;
 	@Positive(message="Positive field")
@@ -22,13 +21,6 @@ public class RentalRequest {
     }
    
 
-    public int getRentalId() {
-        return rentalId;
-    }
-
-    public void setRentalId(int rentalId) {
-        this.rentalId = rentalId;
-    }
 
     public int getCustomerId() {
         return customerId;
