@@ -10,6 +10,7 @@ import com.carrental.model.Customer;
 import com.carrental.model.Rental;
 import com.carrental.repository.CarRepository;
 import com.carrental.repository.CustomerRepository;
+import com.carrental.repository.MaintenanceRepository;
 import com.carrental.repository.RentalRepository;
 import com.carrental.exception.CarNotAvailableException;
 import com.carrental.exception.CarNotFoundException;
@@ -22,11 +23,12 @@ public class RentalService {
     private RentalRepository rentalRepository;
     private CarRepository carRepository;
     private CustomerRepository customerRepository;
-
-    public RentalService(RentalRepository rentalRepository, CarRepository carRepository,CustomerRepository customerRepository) {
-        this.rentalRepository = rentalRepository;
+    private MaintenanceRepository maintenanceRepository;
+    public RentalService(RentalRepository rentalRepository, CarRepository carRepository,CustomerRepository customerRepository,MaintenanceRepository maintenanceRepository) {
+		this.rentalRepository = rentalRepository;
         this.carRepository = carRepository;
         this.customerRepository=customerRepository;
+        this.maintenanceRepository=maintenanceRepository;
     }
 
     public void addRental(Rental rental) {
@@ -36,14 +38,11 @@ public class RentalService {
     @Transactional
     public Rental rentCar( int customerId, int carId,
             LocalDate startDate, LocalDate endDate) {
-    	Car car = carRepository.findById(carId)
+    	Car car = carRepository.findByIdForUpdate(carId)
     	        .orElseThrow(() ->
     	            new CarNotFoundException("Car not found with ID: " + carId)
     	        );
     	
-        if (!car.isAvailable()) {
-            throw new CarNotAvailableException("Car is not available to rent");
-        }
         Customer customer=customerRepository.findById(customerId).orElseThrow(()->new CustomerNotFoundException("Customer not found with ID: " + customerId));
         
         long days = endDate.toEpochDay() - startDate.toEpochDay();
@@ -61,21 +60,21 @@ public class RentalService {
         );
 
 
-        car.setAvailable(false);
-        carRepository.save(car);
-        rental=rentalRepository.save(rental);
-        return rental;
-        
+        if(rentalRepository.checkOverlap(carId, startDate, endDate)) {
+        	throw new CarNotAvailableException("Car with id"+carId+" is already rented for the particular date.Try changing the dates to rent it");
+        }
+        if (maintenanceRepository.checkMaintenanceOverlap(
+                carId, startDate, endDate)) {
+            throw new CarNotAvailableException(
+                    "Car is scheduled for maintenance during the requested dates.");
+        }
+        	rental=rentalRepository.save(rental);
+        	return rental;        	 
     }
 
     public void returnCar(int rentalId) {
 
         Rental rental = getRental(rentalId);
-
-        Car car = rental.getCar();
-        car.setAvailable(true);
-        carRepository.save(car);
-
         rental.setStatus("RETURNED");
         rentalRepository.save(rental);
     }

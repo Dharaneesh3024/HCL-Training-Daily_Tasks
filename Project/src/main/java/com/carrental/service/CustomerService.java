@@ -2,12 +2,11 @@ package com.carrental.service;
 
 import java.util.List;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.carrental.config.AppProperties;
 import com.carrental.exception.CustomerNotFoundException;
 import com.carrental.model.Customer;
 import com.carrental.repository.CustomerRepository;
