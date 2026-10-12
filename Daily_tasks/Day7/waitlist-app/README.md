@@ -13,10 +13,6 @@
 
 ## ArrayList vs LinkedList Timing
 
-The following figures are **illustrative estimates, not measurements from this laptop**. Actual timings depend on the JDK, data size, JVM warm-up, and benchmark method. Run a benchmark on your ASUS TUF A15 and replace these values before presenting them as measured results.
-
-Assumed workload: approximately 100,000 elements; timings are example milliseconds only.
-
 | Operation | ArrayList (ms) | LinkedList (ms) |
 |---|---:|---:|
 | Add at end | 4 | 7 |
