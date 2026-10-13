@@ -2,6 +2,8 @@ package com.carrental.repository;
 
 import java.time.LocalDate;
 
+
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,7 +17,7 @@ public interface MaintenanceRepository extends JpaRepository<Maintenance,Integer
 			"AND m.endDate > :newStartDate")
 	boolean checkMaintenanceOverlap(
 			@Param("carId") int carId,
-			@Param(":newEndDate") LocalDate newStartDate,
-			@Param(":newEndDate") LocalDate newEndDate
+			@Param("newStartDate") LocalDate newStartDate,
+			@Param("newEndDate") LocalDate newEndDate
 			);
 }

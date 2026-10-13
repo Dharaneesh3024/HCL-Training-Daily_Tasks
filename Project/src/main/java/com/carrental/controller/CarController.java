@@ -1,5 +1,6 @@
 package com.carrental.controller;
 import org.springframework.web.bind.annotation.RestController;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +16,8 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
-
+import org.springframework.web.bind.annotation.RequestParam;
+import java.time.LocalDate;
 @RestController
 public class CarController {
 	private CarService carService;
@@ -43,6 +45,11 @@ public class CarController {
 		carService.removeCar(id);
 		return ResponseEntity.noContent().build();
 	}
+	@GetMapping("/api/cars/available")
+	public List<Car> getAvailableCars(@RequestParam LocalDate startDate,@RequestParam LocalDate endDate){
+		return carService.getAvailableCars(startDate, endDate);
+	}
+	
 	
 }
 

@@ -53,5 +53,10 @@ public class GlobalExceptionHandler {
 
         return errors;
     }
+    @ExceptionHandler(MaintenanceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleMaintenanceNotFound(MaintenanceNotFoundException ex) {
+    	return ex.getMessage();
+    }
     
 }

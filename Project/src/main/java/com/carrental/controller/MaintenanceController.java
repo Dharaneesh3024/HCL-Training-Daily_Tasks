@@ -1,5 +1,9 @@
 package com.carrental.controller;
 
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.carrental.dto.MaintenanceRequest;
@@ -11,6 +15,7 @@ import com.carrental.service.MaintenanceService;
 public class MaintenanceController {
 
     private final MaintenanceService maintenanceService;
+    
 
     public MaintenanceController(MaintenanceService maintenanceService) {
         this.maintenanceService = maintenanceService;
@@ -21,4 +26,21 @@ public class MaintenanceController {
             @RequestBody MaintenanceRequest request) {
         return maintenanceService.scheduleMaintenance(request);
     }
+    
+    @GetMapping()
+    public List<Maintenance> getAllMaintenance(){
+    	return maintenanceService.getAllMaintenance();
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<Maintenance> getMaintenance(@PathVariable int id){
+    	Maintenance requestedMaintenance=maintenanceService.getMaintenance(id);
+    	return ResponseEntity.ok(requestedMaintenance);
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> removeMaintenance(@PathVariable int id){
+    	maintenanceService.removeMaintenance(id);
+    	return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); 
+    	}
 }
