@@ -1,4 +1,4 @@
-# UML (redraw this by hand or in draw.io for your sketch)
+# UML
 
 ```
               <<interface>>
