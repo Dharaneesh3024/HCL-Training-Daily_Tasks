@@ -38,6 +38,11 @@ public class RentalService {
     @Transactional
     public Rental rentCar( int customerId, int carId,
             LocalDate startDate, LocalDate endDate) {
+    	if (startDate == null || endDate == null ||
+    	        !endDate.isAfter(startDate)) {
+    	    throw new IllegalArgumentException(
+    	            "End date must be after start date");
+    	}
     	Car car = carRepository.findByIdForUpdate(carId)
     	        .orElseThrow(() ->
     	            new CarNotFoundException("Car not found with ID: " + carId)
@@ -72,9 +77,19 @@ public class RentalService {
         	return rental;        	 
     }
 
-    public void returnCar(int rentalId) {
-
+    public void returnCar(int rentalId,double extraCharges) {
+    	
+    	
         Rental rental = getRental(rentalId);
+        if(!"ACTIVE".equals(rental.getStatus())) {
+        		throw new IllegalArgumentException("This rental is already returned or not available");
+        }
+        if (extraCharges < 0) {
+            throw new IllegalArgumentException(
+                    "Extra charges cannot be negative.");
+        }
+
+        rental.setExtraCharges(extraCharges);
         rental.setStatus("RETURNED");
         rentalRepository.save(rental);
     }

@@ -44,8 +44,8 @@ public class RentalController {
 	}
 	
 @PutMapping("/api/rentals/{id}/return")
-public ResponseEntity<Void> returnCar(@PathVariable int id) {
-	rentalService.returnCar(id);
+public ResponseEntity<Void> returnCar(@PathVariable int id,@RequestBody double extraCharges) {
+	rentalService.returnCar(id,extraCharges);
 	return ResponseEntity.noContent().build();
 }
 	

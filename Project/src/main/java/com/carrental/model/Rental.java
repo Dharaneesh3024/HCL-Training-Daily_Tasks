@@ -19,6 +19,7 @@ public class Rental {
 	private LocalDate endDate;
 	private double totalAmount;
 	private String status="ACTIVE";
+	private double extraCharges;
 	public Rental() {
 	}
 	public String getStatus() {
@@ -72,11 +73,18 @@ public class Rental {
 	public void setTotalAmount(double totalAmount) {
 		this.totalAmount = totalAmount;
 	}
+	public void setExtraCharges(double extraCharges) {
+		this.extraCharges=extraCharges;
+	}
+	public double getExtraCharges() {
+		return extraCharges;
+	}
 	@Override
 	public String toString() {
 	    return "Rental [id=" + id + ", customer=" + customer + ", car=" + car
 	            + ", totalAmount=" + totalAmount + ", status=" + status + "]";
 	}
+	
 	
 	
 }
