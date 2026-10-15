@@ -30,10 +30,6 @@ generic-toolkit/
 
 │                     TrackedResource.java, CsvLoader.java
 
-├── run.bat
-
-└── run.sh
-
 ```
 
 
