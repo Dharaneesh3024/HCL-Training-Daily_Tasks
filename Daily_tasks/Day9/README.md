@@ -1,4 +1,4 @@
-\# Generic Toolkit
+# Generic Toolkit
 
 
 
@@ -6,9 +6,7 @@ Day 9 – Generics. A small Java project covering generic classes and methods, b
 
 
 
-\## Structure
-
-
+## Structure
 
 ```
 
@@ -40,7 +38,7 @@ generic-toolkit/
 
 
 
-\## What it covers
+## What it covers
 
 
 
@@ -64,12 +62,9 @@ generic-toolkit/
 
 
 
-\## Requirements
+## Requirements
 
-
-
-\- JDK 11 or newer
-
+- JDK 11 or newer
 
 
 Manual:
@@ -83,8 +78,7 @@ java -cp out app.Main
 ```
 
 
-
-\## Using the repository for another entity
+## Using the repository for another entity
 
 
 
@@ -100,11 +94,8 @@ customers.saveAll(CsvLoader.load(Paths.get("data", "customers.csv"), Customer::f
 
 
 
-\## Notes
-
-
-
-\- Compiles with `-Xlint:all` without warnings (no raw types, no unchecked operations).
-
+## Notes
+- Compiles with `-Xlint:all` without warnings (no raw types, no unchecked operations).
+- try-with-resources closes resources in reverse order of opening, including when an exception is thrown.
 \- try-with-resources closes resources in reverse order of opening, including when an exception is thrown.
 
