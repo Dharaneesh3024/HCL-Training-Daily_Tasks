@@ -1,6 +1,7 @@
 package com.carrental.repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,5 +21,30 @@ public interface RentalRepository extends JpaRepository<Rental,Integer>{
 		        @Param("carId") int carId,
 		        @Param("newStartDate") LocalDate newStartDate,
 		        @Param("newEndDate") LocalDate newEndDate);
+	
+	@Query("SELECT COALESCE(SUM(" +
+		       "FUNCTION('DATEDIFF', " +
+		       "LEAST(r.endDate, :endDate), " +
+		       "GREATEST(r.startDate, :startDate)" +
+		       ")), 0) " +
+		       "FROM Rental r " +
+		       "WHERE r.car.id = :carId " +
+		       "AND r.status IN ('ACTIVE', 'RETURNED') " +
+		       "AND r.startDate < :endDate " +
+		       "AND r.endDate > :startDate")
+		long getBookedDays(
+		        @Param("carId") int carId,
+		        @Param("startDate") LocalDate startDate,
+		        @Param("endDate") LocalDate endDate);
+	
+    @Query("SELECT r FROM Rental r " +
+            "WHERE r.car.id = :carId " +
+            "AND r.status IN ('ACTIVE', 'RETURNED') " +
+            "AND r.startDate < :endDate " +
+            "AND r.endDate > :startDate")
+     List<Rental> findOverlappingRentals(
+             @Param("carId") int carId,
+             @Param("startDate") LocalDate startDate,
+             @Param("endDate") LocalDate endDate);
 	
 }

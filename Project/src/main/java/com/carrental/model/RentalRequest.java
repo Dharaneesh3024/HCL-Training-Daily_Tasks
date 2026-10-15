@@ -7,10 +7,14 @@ import com.carrental.validation.ValidRentalDates;
 @ValidRentalDates
 public class RentalRequest {
 	
+	@NotNull(message="Null values not allowed")
 	@Positive(message="Positive field")
-    private int customerId;
+    private Integer customerId;
+	
+	@NotNull(message="Null values not allowed")
 	@Positive(message="Positive field")
-    private int carId;
+    private Integer carId;
+	
 	@NotNull(message="Null values not allowed")
     private LocalDate startDate;
 	@NotNull(message="Null values not allowed")

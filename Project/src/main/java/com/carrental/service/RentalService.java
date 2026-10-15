@@ -1,7 +1,9 @@
 package com.carrental.service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -77,7 +79,8 @@ public class RentalService {
         	return rental;        	 
     }
 
-    public void returnCar(int rentalId,double extraCharges) {
+    public Rental returnCar(int rentalId,double extraCharges,String returnCondition,
+            String inspectionNotes) {
     	
     	
         Rental rental = getRental(rentalId);
@@ -91,7 +94,11 @@ public class RentalService {
 
         rental.setExtraCharges(extraCharges);
         rental.setStatus("RETURNED");
-        rentalRepository.save(rental);
+        double total=rental.getTotalAmount();
+        rental.setTotalAmount(total);
+        rental.setReturnCondition(returnCondition);
+        rental.setInspectionNotes(inspectionNotes);
+        return rentalRepository.save(rental);
     }
 
     public Rental getRental(int rentalId) {
@@ -105,5 +112,36 @@ public class RentalService {
 
     public List<Rental> getAllRentals() {
         return rentalRepository.findAll();
+    }
+    
+    public double getUtilisation(int carId, LocalDate startDate, LocalDate endDate) {
+        if (!startDate.isBefore(endDate)) {
+            throw new IllegalArgumentException("End date must be after start date");
+        }
+
+        long totalDays = endDate.toEpochDay() - startDate.toEpochDay();
+
+        List<Rental> rentals = rentalRepository.findOverlappingRentals(
+                carId, startDate, endDate);
+
+        Set<LocalDate> bookedDates = new HashSet<>();
+
+        for (Rental rental : rentals) {
+            LocalDate overlapStart = rental.getStartDate().isAfter(startDate)
+                    ? rental.getStartDate() : startDate;
+
+            LocalDate overlapEnd = rental.getEndDate().isBefore(endDate)
+                    ? rental.getEndDate() : endDate;
+
+            for (LocalDate date = overlapStart;
+                 date.isBefore(overlapEnd);
+                 date = date.plusDays(1)) {
+                bookedDates.add(date);
+            }
+        }
+
+        long bookedDays = bookedDates.size();
+
+        return Math.round((double) bookedDays / totalDays * 10000.0) / 100.0;
     }
 }

@@ -13,29 +13,26 @@ import org.springframework.validation.FieldError;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
     @ExceptionHandler(CarNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleCarNotFound(CarNotFoundException ex) {
-        return ex.getMessage();
+    public Map<String,String> handleCarNotFound(CarNotFoundException ex) {
+        return Map.of("message",ex.getMessage());
     }
-    
     @ExceptionHandler(RentalNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleRentalNotFound(RentalNotFoundException ex) {
-        return ex.getMessage();
+    public Map<String,String> handleRentalNotFound(RentalNotFoundException ex) {
+    	return Map.of("message",ex.getMessage());
     }
-    
     @ExceptionHandler(CarNotAvailableException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public String handleRentalNotFound(CarNotAvailableException ex) {
-        return ex.getMessage();
+    public Map<String,String> handleRentalNotFound(CarNotAvailableException ex) {
+    	return Map.of("message",ex.getMessage());
     }
     
     @ExceptionHandler(CustomerNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleCustomerNotFound(CustomerNotFoundException ex) {
-        return ex.getMessage();
+    public Map<String,String> handleCustomerNotFound(CustomerNotFoundException ex) {
+    	return Map.of("message",ex.getMessage());
     }
     
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -55,8 +52,17 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(MaintenanceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleMaintenanceNotFound(MaintenanceNotFoundException ex) {
-    	return ex.getMessage();
+    public Map<String,String> handleMaintenanceNotFound(MaintenanceNotFoundException ex) {
+    	return Map.of("message",ex.getMessage());
     }
-    
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String,String> handleIllegalArgument(IllegalArgumentException ex) {
+    	return Map.of("message",ex.getMessage());
+    }
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String,String> handleUnexpectedException(Exception ex) {
+    	return Map.of("message","An unexpected error occured.Please try again later");
+    	}
 }

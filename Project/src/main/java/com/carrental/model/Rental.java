@@ -20,6 +20,8 @@ public class Rental {
 	private double totalAmount;
 	private String status="ACTIVE";
 	private double extraCharges;
+	private String returnCondition;
+	private String inspectionNotes;
 	public Rental() {
 	}
 	public String getStatus() {
@@ -78,6 +80,21 @@ public class Rental {
 	}
 	public double getExtraCharges() {
 		return extraCharges;
+	}
+	public double getFinalAmount() {
+		return totalAmount+extraCharges;
+	}
+	public String getReturnCondition() {
+		return returnCondition;
+	}
+	public void setReturnCondition(String returnCondition) {
+		this.returnCondition = returnCondition;
+	}
+	public String getInspectionNotes() {
+		return inspectionNotes;
+	}
+	public void setInspectionNotes(String inspectionNotes) {
+		this.inspectionNotes = inspectionNotes;
 	}
 	@Override
 	public String toString() {
