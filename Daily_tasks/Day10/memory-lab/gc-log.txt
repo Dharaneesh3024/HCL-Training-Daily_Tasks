@@ -1,0 +1,24 @@
+[0.004s][info][gc] Using G1
+[0.030s][info][gc] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 7M->1M(64M) 0.615ms
+[0.043s][info][gc] GC(1) Pause Young (Normal) (G1 Evacuation Pause) 27M->1M(64M) 0.810ms
+[0.052s][info][gc] GC(2) Pause Young (Normal) (G1 Evacuation Pause) 38M->1M(64M) 0.691ms
+[0.056s][info][gc] GC(3) Pause Young (Normal) (G1 Evacuation Pause) 38M->1M(64M) 0.331ms
+[0.058s][info][gc] GC(4) Pause Young (Normal) (G1 Evacuation Pause) 38M->1M(64M) 0.380ms
+[0.061s][info][gc] GC(5) Pause Young (Normal) (G1 Evacuation Pause) 38M->1M(64M) 0.619ms
+[0.064s][info][gc] GC(6) Pause Young (Normal) (G1 Evacuation Pause) 38M->1M(64M) 0.702ms
+[0.066s][info][gc] GC(7) Pause Young (Normal) (G1 Evacuation Pause) 38M->1M(64M) 0.401ms
+[0.069s][info][gc] GC(8) Pause Young (Normal) (G1 Evacuation Pause) 38M->1M(64M) 0.454ms
+[0.071s][info][gc] GC(9) Pause Young (Normal) (G1 Evacuation Pause) 38M->1M(64M) 0.611ms
+[0.074s][info][gc] GC(10) Pause Young (Normal) (G1 Evacuation Pause) 38M->1M(64M) 0.430ms
+[0.077s][info][gc] GC(11) Pause Young (Normal) (G1 Evacuation Pause) 38M->1M(64M) 0.840ms
+[0.079s][info][gc] GC(12) Pause Young (Normal) (G1 Evacuation Pause) 38M->1M(64M) 0.373ms
+[0.082s][info][gc] GC(13) Pause Young (Normal) (G1 Evacuation Pause) 38M->1M(64M) 0.338ms
+[0.085s][info][gc] GC(14) Pause Young (Normal) (G1 Evacuation Pause) 38M->1M(64M) 0.892ms
+[0.087s][info][gc] GC(15) Pause Young (Normal) (G1 Evacuation Pause) 38M->1M(64M) 0.395ms
+[0.090s][info][gc] GC(16) Pause Young (Normal) (G1 Evacuation Pause) 38M->2M(64M) 0.287ms
+[0.093s][info][gc] GC(17) Pause Young (Normal) (G1 Evacuation Pause) 39M->2M(64M) 0.597ms
+[0.097s][info][gc] GC(18) Pause Young (Normal) (G1 Evacuation Pause) 39M->2M(64M) 0.635ms
+[0.100s][info][gc] GC(19) Pause Young (Normal) (G1 Evacuation Pause) 39M->2M(64M) 0.616ms
+[0.104s][info][gc] GC(20) Pause Young (Normal) (G1 Evacuation Pause) 39M->2M(64M) 0.563ms
+[0.107s][info][gc] GC(21) Pause Young (Normal) (G1 Evacuation Pause) 39M->2M(64M) 0.551ms
+survivors kept: 150, checksum 4499998500000
