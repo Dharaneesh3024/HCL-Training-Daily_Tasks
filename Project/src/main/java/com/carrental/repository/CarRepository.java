@@ -1,5 +1,6 @@
 package com.carrental.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,5 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("SELECT c FROM Car c WHERE c.id = :carId")
 	Optional<Car> findByIdForUpdate(@Param("carId") int carId);
+	List<Car> findByBranchId(int branchId);
 }

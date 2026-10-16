@@ -80,4 +80,7 @@ this.maintenanceRepository = maintenanceRepository;
 			}
 			return availableCars;
 	}
+	  public List<Car> getCarsByBranch(int branchId){
+	    	return carRepository.findByBranchId(branchId);
+	    }
 }

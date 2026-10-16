@@ -1,6 +1,7 @@
 package com.carrental.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.*;
 
 @Entity
@@ -17,6 +18,8 @@ public class Car {
     private double pricePerDay;
     
     private boolean available;
+    @ManyToOne
+    private Branch branch;
     
     public Car() {
     }
@@ -69,7 +72,14 @@ public class Car {
 	public void setAvailable(boolean available) {
 		this.available = available;
 	}
+	public Branch getBranch() {
+	    return branch;
+	}
 
+	public void setBranch(Branch branch) {
+	    this.branch = branch;
+	}
+	
 	@Override
 	public String toString() {
 		return "Car [id=" + id + ", brand=" + brand + ", model=" + model + ", pricePerDay=" + pricePerDay

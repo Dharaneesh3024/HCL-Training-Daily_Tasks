@@ -49,6 +49,13 @@ public class CarController {
 	public List<Car> getAvailableCars(@RequestParam LocalDate startDate,@RequestParam LocalDate endDate){
 		return carService.getAvailableCars(startDate, endDate);
 	}
+
+@GetMapping("api/cars/branch/{branchId}")
+public ResponseEntity<List<Car>> getCarsByBranch(
+        @PathVariable int branchId) {
+    return ResponseEntity.ok(carService.getCarsByBranch(branchId));
+}
+
 	
 	
 }
