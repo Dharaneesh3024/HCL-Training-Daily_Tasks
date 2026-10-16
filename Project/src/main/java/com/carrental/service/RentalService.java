@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.carrental.model.Car;
 import com.carrental.model.Customer;
+import com.carrental.model.PickupInspectionRequest;
 import com.carrental.model.Rental;
 import com.carrental.repository.CarRepository;
 import com.carrental.repository.CustomerRepository;
@@ -51,7 +52,9 @@ public class RentalService {
     	        );
     	
         Customer customer=customerRepository.findById(customerId).orElseThrow(()->new CustomerNotFoundException("Customer not found with ID: " + customerId));
-        
+        if(customer.getLicenseExpiryDate()==null || customer.getLicenseExpiryDate().isBefore(LocalDate.now())) {
+        	throw new CustomerNotFoundException("License Expired or Missing.Kindly renew the license to rent cars");
+        }
         long days = endDate.toEpochDay() - startDate.toEpochDay();
 
         double totalAmount = days * car.getPricePerDay();
@@ -75,6 +78,7 @@ public class RentalService {
             throw new CarNotAvailableException(
                     "Car is scheduled for maintenance during the requested dates.");
         }
+        
         	rental=rentalRepository.save(rental);
         	return rental;        	 
     }
@@ -143,5 +147,19 @@ public class RentalService {
         long bookedDays = bookedDates.size();
 
         return Math.round((double) bookedDays / totalDays * 10000.0) / 100.0;
+    }
+    public Rental recordPickupInspection(int rentalId,PickupInspectionRequest request) {
+    	Rental rental=rentalRepository.findById(rentalId).orElseThrow(()-> new RentalNotFoundException("Rental not found with id:"+rentalId));
+    	if(!"ACTIVE".equals(rental.getStatus())) {
+    		throw new IllegalArgumentException("Pickup Inspection available only for active rentals");
+    	}
+    	if(rental.getPickupOdometer()!=null) {
+    		throw new IllegalArgumentException("Pickup inspection is already recorded.");
+    	}
+    	rental.setPickupFuelLevel(request.getPickupFuelLevel());
+    	rental.setPickupOdometer(request.getPickupOdometer());
+    	rental.setPickupNotes(request.getPickupNotes());
+    	return rentalRepository.save(rental);
+    	
     }
 }

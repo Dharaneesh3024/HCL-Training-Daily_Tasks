@@ -16,18 +16,18 @@ import com.carrental.repository.CustomerRepository;
 public class CustomerService {
 
 	private static final Logger log =
-	        LoggerFactory.getLogger(CustomerService.class);
-	
-
-
+	LoggerFactory.getLogger(CustomerService.class);
 	private CustomerRepository customerRepository;
 	public CustomerService(CustomerRepository customerRepository) {
 			this.customerRepository=customerRepository;
 	}
 	public Customer addCustomer(Customer customer) {
 	    log.info("Adding customer: {}", customer.getName());
-		customerRepository.save(customer);
-		return customer;
+	    if(customerRepository.existsByLicenseNumber(customer.getLicenseNumber())) {
+	    		throw new IllegalArgumentException("Duplicate license number found!! Kindly verify it.");
+	    }	
+		return customerRepository.save(customer);
+		
 	}
 	public List<Customer> getCustomers(){
 		return customerRepository.findAll();

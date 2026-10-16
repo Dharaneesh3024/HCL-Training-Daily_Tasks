@@ -1,10 +1,14 @@
 package com.carrental.model;
+import java.time.LocalDate;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Customer {
@@ -19,7 +23,12 @@ public class Customer {
 	private String email;
 	@NotBlank(message="phone should not be empty")
 	private String phone;
-	
+	@NotBlank(message = "Driving licence number is mandatory")
+	@Column(unique = true)
+private String licenseNumber;
+
+	@NotNull(message = "Driving licence expiry date is mandatory")
+	private LocalDate licenseExpiryDate;
 	public Customer() {
 	}
 	public Customer(int id, String name, String email, String phone) {
@@ -52,6 +61,19 @@ public class Customer {
 	}
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+	
+	public String getLicenseNumber() {
+		return licenseNumber;
+	}
+	public void setLicenseNumber(String licenseNumber) {
+		this.licenseNumber = licenseNumber;
+	}
+	public LocalDate getLicenseExpiryDate() {
+		return licenseExpiryDate;
+	}
+	public void setLicenseExpiryDate(LocalDate licenseExpiryDate) {
+		this.licenseExpiryDate = licenseExpiryDate;
 	}
 	@Override
 	public String toString() {

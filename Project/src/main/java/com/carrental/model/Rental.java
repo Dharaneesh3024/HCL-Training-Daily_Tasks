@@ -22,6 +22,9 @@ public class Rental {
 	private double extraCharges;
 	private String returnCondition;
 	private String inspectionNotes;
+	private Integer pickupOdometer;
+	private Double pickupFuelLevel;
+	private String pickupNotes;
 	public Rental() {
 	}
 	public String getStatus() {
@@ -95,6 +98,25 @@ public class Rental {
 	}
 	public void setInspectionNotes(String inspectionNotes) {
 		this.inspectionNotes = inspectionNotes;
+	}
+	
+	public Integer getPickupOdometer() {
+		return pickupOdometer;
+	}
+	public void setPickupOdometer(Integer pickupOdometer) {
+		this.pickupOdometer = pickupOdometer;
+	}
+	public Double getPickupFuelLevel() {
+		return pickupFuelLevel;
+	}
+	public void setPickupFuelLevel(Double pickupFuelLevel) {
+		this.pickupFuelLevel = pickupFuelLevel;
+	}
+	public String getPickupNotes() {
+		return pickupNotes;
+	}
+	public void setPickupNotes(String pickupNotes) {
+		this.pickupNotes = pickupNotes;
 	}
 	@Override
 	public String toString() {
