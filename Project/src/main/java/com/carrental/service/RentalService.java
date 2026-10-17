@@ -52,7 +52,7 @@ public class RentalService {
     	        );
     	
         Customer customer=customerRepository.findById(customerId).orElseThrow(()->new CustomerNotFoundException("Customer not found with ID: " + customerId));
-        if(customer.getLicenseExpiryDate()==null || customer.getLicenseExpiryDate().isBefore(LocalDate.now())) {
+        if(customer.getLicenseExpiryDate()==null || customer.getLicenseExpiryDate().isBefore(endDate)) {
         	throw new CustomerNotFoundException("License Expired or Missing.Kindly renew the license to rent cars");
         }
         long days = endDate.toEpochDay() - startDate.toEpochDay();
@@ -160,6 +160,15 @@ public class RentalService {
     	rental.setPickupOdometer(request.getPickupOdometer());
     	rental.setPickupNotes(request.getPickupNotes());
     	return rentalRepository.save(rental);
+    	
+    }
+    public void deleteRental(int rentalId) {
+    	if(rentalRepository.existsById(rentalId)) {
+    		rentalRepository.deleteById(rentalId);
+    	}
+    	else {
+    		throw new RentalNotFoundException("Rental not found to delete");
+    	}
     	
     }
 }

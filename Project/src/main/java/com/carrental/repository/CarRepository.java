@@ -17,4 +17,6 @@ public interface CarRepository extends JpaRepository<Car, Integer> {
 	@Query("SELECT c FROM Car c WHERE c.id = :carId")
 	Optional<Car> findByIdForUpdate(@Param("carId") int carId);
 	List<Car> findByBranchId(int branchId);
+    List<Car> findByBranchIdAndAvailableTrue(int branchId);
+
 }

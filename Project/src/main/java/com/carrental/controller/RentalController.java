@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,5 +66,9 @@ public ResponseEntity<Rental> getRental(@PathVariable int id) {
     Rental rental = rentalService.getRental(id);
     return ResponseEntity.ok(rental);
 }
-	
+@DeleteMapping("/api/rentals/{id}")
+	public ResponseEntity<Void> deleteRental(@PathVariable int id){
+		rentalService.deleteRental(id);
+		return ResponseEntity.noContent().build();
+}
 }

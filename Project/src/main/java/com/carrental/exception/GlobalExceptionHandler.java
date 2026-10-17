@@ -1,5 +1,7 @@
 package com.carrental.exception;
 import org.springframework.validation.ObjectError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +15,8 @@ import org.springframework.validation.FieldError;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+	private static final Logger logger =
+	        LoggerFactory.getLogger(GlobalExceptionHandler.class);
     @ExceptionHandler(CarNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String,String> handleCarNotFound(CarNotFoundException ex) {
@@ -62,7 +66,13 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String,String> handleUnexpectedException(Exception ex) {
-    	return Map.of("message","An unexpected error occured.Please try again later");
-    	}
+    public Map<String, String> handleUnexpectedException(Exception ex) {
+
+        logger.error("Unexpected error occurred:", ex);
+
+        return Map.of(
+            "message",
+            "An unexpected error occurred. Please try again later"
+        );
+    }
 }

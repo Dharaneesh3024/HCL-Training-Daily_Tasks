@@ -50,11 +50,32 @@ public class CarController {
 		return carService.getAvailableCars(startDate, endDate);
 	}
 
-@GetMapping("api/cars/branch/{branchId}")
+@GetMapping("/api/cars/branch/{branchId}")
 public ResponseEntity<List<Car>> getCarsByBranch(
         @PathVariable int branchId) {
     return ResponseEntity.ok(carService.getCarsByBranch(branchId));
 }
+
+@GetMapping("/api/cars/branch/{branchId}/available")
+public ResponseEntity<List<Car>> getAvailableCarsByBranch(
+        @PathVariable int branchId) {
+    return ResponseEntity.ok(
+        carService.getAvailableCarsByBranch(branchId)
+    );
+}
+@GetMapping("/api/cars/branch/{branchId}/available-by-dates")
+public ResponseEntity<List<Car>> getAvailableCarsByBranchAndDates(
+        @PathVariable("branchId") int branchId,
+        @RequestParam LocalDate startDate,
+        @RequestParam LocalDate endDate) {
+
+    return ResponseEntity.ok(
+        carService.getAvailableCarsByBranchAndDates(
+            branchId, startDate, endDate));
+}
+
+
+
 
 	
 	

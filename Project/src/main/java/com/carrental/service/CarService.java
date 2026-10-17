@@ -17,11 +17,10 @@ public class CarService {
 	private MaintenanceRepository maintenanceRepository;
 	
 	public CarService(CarRepository carRepository,
-            RentalRepository rentalRepository,
-            MaintenanceRepository maintenanceRepository) {
-this.carRepository = carRepository;
-this.rentalRepository = rentalRepository;
-this.maintenanceRepository = maintenanceRepository;
+            RentalRepository rentalRepository,MaintenanceRepository maintenanceRepository) {
+		this.carRepository = carRepository;
+		this.rentalRepository = rentalRepository;
+		this.maintenanceRepository = maintenanceRepository;
 }
 	
 	public Car addCar(Car car) {
@@ -83,4 +82,21 @@ this.maintenanceRepository = maintenanceRepository;
 	  public List<Car> getCarsByBranch(int branchId){
 	    	return carRepository.findByBranchId(branchId);
 	    }
+public List<Car> getAvailableCarsByBranch(int branchId) {
+    return carRepository.findByBranchIdAndAvailableTrue(branchId);
+}
+public List<Car> getAvailableCarsByBranchAndDates(int branchId,LocalDate startDate,LocalDate endDate){
+	   if (startDate == null || endDate == null
+	            || !endDate.isAfter(startDate)) {
+	        throw new IllegalArgumentException(
+	                "End date must be after start date");
+	    }
+	    List<Car> availableCars = new ArrayList<>();
+	    for(Car car:carRepository.findByBranchIdAndAvailableTrue(branchId)) {
+	    	if((!rentalRepository.checkOverlap(car.getId(), startDate, endDate)) && (!maintenanceRepository.checkMaintenanceOverlap(car.getId(), startDate, endDate)) ) {
+	    			availableCars.add(car);
+	    	}
+	    }
+	    return availableCars;
+}
 }
