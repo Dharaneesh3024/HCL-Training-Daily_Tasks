@@ -1,8 +1,6 @@
-\# Product Filter Engine
+# Product Filter Engine
 
-
-
-\*\*Day 13 – Functional Programming\*\*
+**Day 13 – Functional Programming**
 
 
 
@@ -10,7 +8,7 @@ A small Java project exploring functional programming concepts, including lambda
 
 
 
-\## 📁 Project Structure
+## 📁 Project Structure
 
 
 
@@ -40,7 +38,7 @@ filter-engine/
 
 
 
-\## 📚 Topics Covered
+## 📚 Topics Covered
 
 
 
@@ -66,7 +64,7 @@ filter-engine/
 
 
 
-\## 🔗 Method Reference Types
+## 🔗 Method Reference Types
 
 
 
@@ -84,19 +82,19 @@ filter-engine/
 
 
 
-\## ⚙️ Requirements
+## ⚙️ Requirements
 
 
 
-\- \*\*JDK 8 or newer\*\*
+**JDK 8 or newer**
 
 
 
-\## 🚀 How to Run
+## 🚀 How to Run
 
 
 
-\### Option 1: Run from an IDE
+### Option 1: Run from an IDE
 
 
 
@@ -104,7 +102,7 @@ Import the project into your preferred Java IDE and run `app.Main`.
 
 
 
-\### Option 2: Compile and Run from the Terminal
+### Option 2: Compile and Run from the Terminal
 
 
 
@@ -112,7 +110,7 @@ Execute the following commands from the project root:
 
 
 
-\*\*1. Compile the source files\*\*
+**1. Compile the source files**
 
 
 
@@ -124,7 +122,7 @@ javac -d out src/model/\*.java src/functional/\*.java src/engine/\*.java src/app
 
 
 
-\*\*2. Run the application\*\*
+**2. Run the application**
 
 
 
@@ -136,15 +134,15 @@ java -cp out app.Main
 
 
 
-\## 📝 Notes
+## 📝 Notes
 
 
 
-\- Compiles with `-Xlint:all` without warnings.
+- Compiles with `-Xlint:all` without warnings.
 
-\- No anonymous inner classes are used.
+- No anonymous inner classes are used.
 
-\- Lambdas that simply invoke a single method are replaced with method references where appropriate.
+- Lambdas that simply invoke a single method are replaced with method references where appropriate.
 
 
 
