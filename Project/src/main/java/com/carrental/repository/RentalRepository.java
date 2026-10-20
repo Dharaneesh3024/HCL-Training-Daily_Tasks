@@ -11,6 +11,10 @@ import com.carrental.model.Rental;
 
 
 public interface RentalRepository extends JpaRepository<Rental,Integer>{
+	boolean existsByCarId(int carId);
+	boolean existsByCustomerId(int customerId);
+
+	
 	@Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END " +
 		       "FROM Rental r " +
 		       "WHERE r.car.id = :carId " +

@@ -42,7 +42,7 @@ public class CarController {
 	}
 	@DeleteMapping("/api/cars/{id}")
 	public ResponseEntity<Void> deleteCar(@PathVariable int id) {
-		carService.removeCar(id);
+		carService.deleteCar(id);
 		return ResponseEntity.noContent().build();
 	}
 	@GetMapping("/api/cars/available")
@@ -73,6 +73,8 @@ public ResponseEntity<List<Car>> getAvailableCarsByBranchAndDates(
         carService.getAvailableCarsByBranchAndDates(
             branchId, startDate, endDate));
 }
+
+
 
 
 

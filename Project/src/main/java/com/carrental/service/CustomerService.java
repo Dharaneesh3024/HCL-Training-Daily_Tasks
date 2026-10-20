@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.carrental.exception.CustomerNotFoundException;
 import com.carrental.model.Customer;
 import com.carrental.repository.CustomerRepository;
+import com.carrental.repository.RentalRepository;
 
 
 @Service
@@ -18,8 +19,10 @@ public class CustomerService {
 	private static final Logger log =
 	LoggerFactory.getLogger(CustomerService.class);
 	private CustomerRepository customerRepository;
-	public CustomerService(CustomerRepository customerRepository) {
+	private RentalRepository rentalRepository;
+	public CustomerService(CustomerRepository customerRepository,RentalRepository rentalRepository) {
 			this.customerRepository=customerRepository;
+			this.rentalRepository=rentalRepository;
 	}
 	public Customer addCustomer(Customer customer) {
 	    log.info("Adding customer: {}", customer.getName());
@@ -39,7 +42,12 @@ public class CustomerService {
 	
 	public void deleteCustomer(int id) {
 			if(customerRepository.existsById(id)) {
-				customerRepository.deleteById(id);
+				if(rentalRepository.existsByCustomerId(id)) {
+					throw new IllegalArgumentException("Customer associated with rental and can't be deleted");
+				}
+				else {
+					customerRepository.deleteById(id);
+				}
 			}
 			else {
 				throw new CustomerNotFoundException("Customer with id "+id+" not found");

@@ -92,11 +92,19 @@ public List<Car> getAvailableCarsByBranchAndDates(int branchId,LocalDate startDa
 	                "End date must be after start date");
 	    }
 	    List<Car> availableCars = new ArrayList<>();
-	    for(Car car:carRepository.findByBranchIdAndAvailableTrue(branchId)) {
+	    for(Car car:carRepository.findByBranchId(branchId)) {
 	    	if((!rentalRepository.checkOverlap(car.getId(), startDate, endDate)) && (!maintenanceRepository.checkMaintenanceOverlap(car.getId(), startDate, endDate)) ) {
 	    			availableCars.add(car);
 	    	}
 	    }
 	    return availableCars;
+}
+
+public void deleteCar(int carId) {
+	carRepository.findById(carId).orElseThrow(()->new CarNotFoundException("The requested car not found"));
+	if(rentalRepository.existsByCarId(carId)) {
+		throw new IllegalArgumentException("Car is associated with rental,so cannot be deleted");
+	}
+	carRepository.deleteById(carId);
 }
 }

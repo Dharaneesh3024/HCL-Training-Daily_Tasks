@@ -22,7 +22,6 @@ import com.carrental.exception.RentalNotFoundException;
 
 @Service
 public class RentalService {
-
     private RentalRepository rentalRepository;
     private CarRepository carRepository;
     private CustomerRepository customerRepository;
@@ -33,11 +32,9 @@ public class RentalService {
         this.customerRepository=customerRepository;
         this.maintenanceRepository=maintenanceRepository;
     }
-
     public void addRental(Rental rental) {
         rentalRepository.save(rental);
     }
-
     @Transactional
     public Rental rentCar( int customerId, int carId,
             LocalDate startDate, LocalDate endDate) {
@@ -49,18 +46,14 @@ public class RentalService {
     	Car car = carRepository.findByIdForUpdate(carId)
     	        .orElseThrow(() ->
     	            new CarNotFoundException("Car not found with ID: " + carId)
-    	        );
-    	
+    	        );	
         Customer customer=customerRepository.findById(customerId).orElseThrow(()->new CustomerNotFoundException("Customer not found with ID: " + customerId));
         if(customer.getLicenseExpiryDate()==null || customer.getLicenseExpiryDate().isBefore(endDate)) {
         	throw new CustomerNotFoundException("License Expired or Missing.Kindly renew the license to rent cars");
         }
         long days = endDate.toEpochDay() - startDate.toEpochDay();
-
         double totalAmount = days * car.getPricePerDay();
-
         Rental rental = new Rental(
-                
                 customer,
                 car,
                 startDate,
@@ -78,7 +71,8 @@ public class RentalService {
             throw new CarNotAvailableException(
                     "Car is scheduled for maintenance during the requested dates.");
         }
-        
+        	car.setAvailable(true);
+        	carRepository.save(car);
         	rental=rentalRepository.save(rental);
         	return rental;        	 
     }
@@ -98,7 +92,7 @@ public class RentalService {
 
         rental.setExtraCharges(extraCharges);
         rental.setStatus("RETURNED");
-        double total=rental.getTotalAmount();
+        double total=rental.getFinalAmount();
         rental.setTotalAmount(total);
         rental.setReturnCondition(returnCondition);
         rental.setInspectionNotes(inspectionNotes);
@@ -160,7 +154,6 @@ public class RentalService {
     	rental.setPickupOdometer(request.getPickupOdometer());
     	rental.setPickupNotes(request.getPickupNotes());
     	return rentalRepository.save(rental);
-    	
     }
     public void deleteRental(int rentalId) {
     	if(rentalRepository.existsById(rentalId)) {
@@ -168,7 +161,6 @@ public class RentalService {
     	}
     	else {
     		throw new RentalNotFoundException("Rental not found to delete");
-    	}
-    	
+    	}	
     }
 }
