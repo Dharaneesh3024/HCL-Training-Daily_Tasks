@@ -68,4 +68,29 @@ public class MaintenanceService {
 		}
 		
 	}
+	
+	public Maintenance updateMaintenance(int id, MaintenanceRequest request) {
+		Maintenance maintenance=maintenanceRepository.findById(id).
+				orElseThrow(()->new MaintenanceNotFoundException("Maintenance not found.Kindly verify the details"));
+		Car car=carRepository.findById(request.getCarId()).
+				orElseThrow(()->new CarNotFoundException("Car with the requested id was not found."));
+		LocalDate startDate=request.getStartDate();
+		LocalDate endDate=request.getEndDate();
+		if(!endDate.isAfter(startDate)) {
+			throw new IllegalArgumentException("End date must be after start date.");
+		}
+		   if(maintenanceRepository.checkMaintenanceOverlapExcludingId( car.getId(), id, startDate, endDate)) {
+		        throw new CarNotAvailableException(
+		                "Car already has maintenance during the selected dates");
+		    }
+		   if(rentalRepository.checkOverlap(request.getCarId(), startDate, endDate)) {
+			   throw new CarNotAvailableException("The car is not available to rent.Please try selecting other dates");
+		   }
+		   maintenance.setCar(car);
+		   maintenance.setStartDate(startDate);
+		   maintenance.setEndDate(endDate);
+		   maintenance.setDescription(request.getDescription());
+		   return maintenanceRepository.save(maintenance);
+		
+	}
 }

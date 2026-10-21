@@ -10,6 +10,8 @@ import com.carrental.dto.MaintenanceRequest;
 import com.carrental.model.Maintenance;
 import com.carrental.service.MaintenanceService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/maintenance")
 public class MaintenanceController {
@@ -43,4 +45,10 @@ public class MaintenanceController {
     	maintenanceService.removeMaintenance(id);
     	return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); 
     	}
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<Maintenance> updateMaintenance(@PathVariable int id,@Valid @RequestBody MaintenanceRequest request){
+    	Maintenance maintenance=maintenanceService.updateMaintenance(id, request);
+    	return ResponseEntity.ok(maintenance);
+    }
 }

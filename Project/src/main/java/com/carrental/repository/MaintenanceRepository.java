@@ -20,4 +20,19 @@ public interface MaintenanceRepository extends JpaRepository<Maintenance,Integer
 			@Param("newStartDate") LocalDate newStartDate,
 			@Param("newEndDate") LocalDate newEndDate
 			);
+	
+
+@Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END " +
+       "FROM Maintenance m " +
+       "WHERE m.car.id = :carId " +
+       "AND m.id <> :maintenanceId " +
+       "AND m.startDate < :newEndDate " +
+       "AND m.endDate > :newStartDate")
+boolean checkMaintenanceOverlapExcludingId(
+        @Param("carId") int carId,
+        @Param("maintenanceId") int maintenanceId,
+        @Param("newStartDate") LocalDate newStartDate,
+        @Param("newEndDate") LocalDate newEndDate
+);
+
 }
