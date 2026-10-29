@@ -39,9 +39,18 @@ public class MaintenanceService {
 		  if(maintenanceRepository.checkMaintenanceOverlap(request.getCarId(), startDate, endDate)) {
 			  throw new CarNotAvailableException("Car not available at selected dates due to maintenance");
 		  }
-		  if(rentalRepository.checkOverlap(car.getId(), startDate, endDate)) {
-			  throw new CarNotAvailableException("Car not available to rent");
-		  }
+		  boolean overlap = rentalRepository.checkOverlap(
+			        car.getId(), startDate, endDate);
+
+			System.out.println("Car ID: " + car.getId());
+			System.out.println("Start date: " + startDate);
+			System.out.println("End date: " + endDate);
+			System.out.println("Rental overlap: " + overlap);
+
+			if (overlap) {
+			    throw new CarNotAvailableException(
+			            "Car not available due to an active rental");
+			}
 		  Maintenance maintenance=new Maintenance();
 		  maintenance.setCar(car);
 		    maintenance.setStartDate(startDate);
