@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.carrental.model.Car;
@@ -110,6 +111,12 @@ public class RentalService {
 
     public List<Rental> getAllRentals() {
         return rentalRepository.findAll();
+    }
+    
+    private String getLoggedInEmail() {
+        return SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
     }
     
     public double getUtilisation(int carId, LocalDate startDate, LocalDate endDate) {
