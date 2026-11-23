@@ -1,12 +1,16 @@
+
 package com.carrental.service;
+
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 
 import com.carrental.model.Car;
 import com.carrental.model.Customer;
@@ -23,37 +27,81 @@ import com.carrental.exception.RentalNotFoundException;
 
 @Service
 public class RentalService {
+
     private RentalRepository rentalRepository;
     private CarRepository carRepository;
     private CustomerRepository customerRepository;
     private MaintenanceRepository maintenanceRepository;
-    public RentalService(RentalRepository rentalRepository, CarRepository carRepository,CustomerRepository customerRepository,MaintenanceRepository maintenanceRepository) {
-		this.rentalRepository = rentalRepository;
+
+    public RentalService(RentalRepository rentalRepository,
+                         CarRepository carRepository,
+                         CustomerRepository customerRepository,
+                         MaintenanceRepository maintenanceRepository) {
+
+        this.rentalRepository = rentalRepository;
         this.carRepository = carRepository;
-        this.customerRepository=customerRepository;
-        this.maintenanceRepository=maintenanceRepository;
+        this.customerRepository = customerRepository;
+        this.maintenanceRepository = maintenanceRepository;
     }
+
+    private String getLoggedInEmail() {
+        return SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+    }
+
+    private boolean isAdmin() {
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        return authentication.getAuthorities().stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_ADMIN"));
+    }
+
     public void addRental(Rental rental) {
         rentalRepository.save(rental);
     }
+
     @Transactional
-    public Rental rentCar( int customerId, int carId,
-            LocalDate startDate, LocalDate endDate) {
-    	if (startDate == null || endDate == null ||
-    	        !endDate.isAfter(startDate)) {
-    	    throw new IllegalArgumentException(
-    	            "End date must be after start date");
-    	}
-    	Car car = carRepository.findByIdForUpdate(carId)
-    	        .orElseThrow(() ->
-    	            new CarNotFoundException("Car not found with ID: " + carId)
-    	        );	
-        Customer customer=customerRepository.findById(customerId).orElseThrow(()->new CustomerNotFoundException("Customer not found with ID: " + customerId));
-        if(customer.getLicenseExpiryDate()==null || customer.getLicenseExpiryDate().isBefore(endDate)) {
-        	throw new CustomerNotFoundException("License Expired or Missing.Kindly renew the license to rent cars");
+    public Rental rentCar(int customerId, int carId,
+                          LocalDate startDate, LocalDate endDate) {
+
+        if (startDate == null || endDate == null ||
+                !endDate.isAfter(startDate)) {
+            throw new IllegalArgumentException(
+                    "End date must be after start date");
         }
+        if (startDate.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException(
+                    "Booking start date cannot be in the past");
+        }
+
+        Car car = carRepository.findByIdForUpdate(carId)
+                .orElseThrow(() ->
+                        new CarNotFoundException(
+                                "Car not found with ID: " + carId));
+
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() ->
+                        new CustomerNotFoundException(
+                                "Customer not found with ID: " + customerId));
+
+        if (!isAdmin() &&
+                !customer.getEmail().equalsIgnoreCase(getLoggedInEmail())) {
+            throw new AccessDeniedException(
+                    "You can only create rentals for your own account");
+        }
+
+        if (customer.getLicenseExpiryDate() == null ||
+                customer.getLicenseExpiryDate().isBefore(endDate)) {
+            throw new CustomerNotFoundException(
+                    "License Expired or Missing. Kindly renew the license to rent cars");
+        }
+
         long days = endDate.toEpochDay() - startDate.toEpochDay();
         double totalAmount = days * car.getPricePerDay();
+
         Rental rental = new Rental(
                 customer,
                 car,
@@ -63,29 +111,34 @@ public class RentalService {
                 "ACTIVE"
         );
 
-
-        if(rentalRepository.checkOverlap(carId, startDate, endDate)) {
-        	throw new CarNotAvailableException("Car with id"+carId+" is already rented for the particular date.Try changing the dates to rent it");
+        if (rentalRepository.checkOverlap(carId, startDate, endDate)) {
+            throw new CarNotAvailableException(
+                    "Car with id " + carId +
+                    " is already rented for the particular date. Try changing the dates to rent it");
         }
+
         if (maintenanceRepository.checkMaintenanceOverlap(
                 carId, startDate, endDate)) {
             throw new CarNotAvailableException(
                     "Car is scheduled for maintenance during the requested dates.");
         }
-        	car.setAvailable(true);
-        	carRepository.save(car);
-        	rental=rentalRepository.save(rental);
-        	return rental;        	 
+
+        car.setAvailable(true);
+        carRepository.save(car);
+
+        return rentalRepository.save(rental);
     }
 
-    public Rental returnCar(int rentalId,double extraCharges,String returnCondition,
-            String inspectionNotes) {
-    	
-    	
+    public Rental returnCar(int rentalId, double extraCharges,
+                            String returnCondition, String inspectionNotes) {
+
         Rental rental = getRental(rentalId);
-        if(!"ACTIVE".equals(rental.getStatus())) {
-        		throw new IllegalArgumentException("This rental is already returned or not available");
+
+        if (!"ACTIVE".equals(rental.getStatus())) {
+            throw new IllegalArgumentException(
+                    "This rental is already returned or not available");
         }
+
         if (extraCharges < 0) {
             throw new IllegalArgumentException(
                     "Extra charges cannot be negative.");
@@ -93,35 +146,68 @@ public class RentalService {
 
         rental.setExtraCharges(extraCharges);
         rental.setStatus("RETURNED");
-        double total=rental.getFinalAmount();
+
+        double total = rental.getFinalAmount();
         rental.setTotalAmount(total);
+
         rental.setReturnCondition(returnCondition);
         rental.setInspectionNotes(inspectionNotes);
+
+        return rentalRepository.save(rental);
+    }
+
+    public Rental cancelRental(int rentalId) {
+
+        Rental rental = getRental(rentalId);
+
+        if (!"ACTIVE".equals(rental.getStatus())) {
+            throw new IllegalArgumentException(
+                    "Only active bookings can be cancelled");
+        }
+        if (rental.getPickupOdometer() != null) {
+            throw new IllegalArgumentException(
+                    "Booking cannot be cancelled after vehicle pickup");
+        }
+
+        rental.setStatus("CANCELLED");
+
         return rentalRepository.save(rental);
     }
 
     public Rental getRental(int rentalId) {
-        return rentalRepository.findById(rentalId)
+
+        Rental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() ->
-                    new RentalNotFoundException(
-                        "Rental with id " + rentalId + " not found"
-                    )
-                );
+                        new RentalNotFoundException(
+                                "Rental with id " + rentalId + " not found"));
+
+        if (!isAdmin() &&
+                (rental.getCustomer() == null ||
+                 rental.getCustomer().getEmail() == null ||
+                 !rental.getCustomer().getEmail()
+                        .equalsIgnoreCase(getLoggedInEmail()))) {
+
+            throw new AccessDeniedException(
+                    "You are not authorized to access this rental");
+        }
+
+        return rental;
     }
 
     public List<Rental> getAllRentals() {
         return rentalRepository.findAll();
     }
-    
-    private String getLoggedInEmail() {
-        return SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
+
+    public List<Rental> getMyRentals() {
+        return rentalRepository.findByCustomer_Email(getLoggedInEmail());
     }
-    
-    public double getUtilisation(int carId, LocalDate startDate, LocalDate endDate) {
+
+    public double getUtilisation(int carId, LocalDate startDate,
+                                  LocalDate endDate) {
+
         if (!startDate.isBefore(endDate)) {
-            throw new IllegalArgumentException("End date must be after start date");
+            throw new IllegalArgumentException(
+                    "End date must be after start date");
         }
 
         long totalDays = endDate.toEpochDay() - startDate.toEpochDay();
@@ -132,6 +218,7 @@ public class RentalService {
         Set<LocalDate> bookedDates = new HashSet<>();
 
         for (Rental rental : rentals) {
+
             LocalDate overlapStart = rental.getStartDate().isAfter(startDate)
                     ? rental.getStartDate() : startDate;
 
@@ -141,33 +228,46 @@ public class RentalService {
             for (LocalDate date = overlapStart;
                  date.isBefore(overlapEnd);
                  date = date.plusDays(1)) {
+
                 bookedDates.add(date);
             }
         }
 
         long bookedDays = bookedDates.size();
 
-        return Math.round((double) bookedDays / totalDays * 10000.0) / 100.0;
+        return Math.round(
+                (double) bookedDays / totalDays * 10000.0) / 100.0;
     }
-    public Rental recordPickupInspection(int rentalId,PickupInspectionRequest request) {
-    	Rental rental=rentalRepository.findById(rentalId).orElseThrow(()-> new RentalNotFoundException("Rental not found with id:"+rentalId));
-    	if(!"ACTIVE".equals(rental.getStatus())) {
-    		throw new IllegalArgumentException("Pickup Inspection available only for active rentals");
-    	}
-    	if(rental.getPickupOdometer()!=null) {
-    		throw new IllegalArgumentException("Pickup inspection is already recorded.");
-    	}
-    	rental.setPickupFuelLevel(request.getPickupFuelLevel());
-    	rental.setPickupOdometer(request.getPickupOdometer());
-    	rental.setPickupNotes(request.getPickupNotes());
-    	return rentalRepository.save(rental);
+
+    public Rental recordPickupInspection(
+            int rentalId, PickupInspectionRequest request) {
+
+        Rental rental = getRental(rentalId);
+
+        if (!"ACTIVE".equals(rental.getStatus())) {
+            throw new IllegalArgumentException(
+                    "Pickup Inspection available only for active rentals");
+        }
+
+        if (rental.getPickupOdometer() != null) {
+            throw new IllegalArgumentException(
+                    "Pickup inspection is already recorded.");
+        }
+
+        rental.setPickupFuelLevel(request.getPickupFuelLevel());
+        rental.setPickupOdometer(request.getPickupOdometer());
+        rental.setPickupNotes(request.getPickupNotes());
+
+        return rentalRepository.save(rental);
     }
+
     public void deleteRental(int rentalId) {
-    	if(rentalRepository.existsById(rentalId)) {
-    		rentalRepository.deleteById(rentalId);
-    	}
-    	else {
-    		throw new RentalNotFoundException("Rental not found to delete");
-    	}	
+
+        if (rentalRepository.existsById(rentalId)) {
+            rentalRepository.deleteById(rentalId);
+        } else {
+            throw new RentalNotFoundException(
+                    "Rental not found to delete");
+        }
     }
 }

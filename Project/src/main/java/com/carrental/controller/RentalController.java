@@ -71,4 +71,13 @@ public ResponseEntity<Rental> getRental(@PathVariable int id) {
 		rentalService.deleteRental(id);
 		return ResponseEntity.noContent().build();
 }
+@GetMapping("/api/rentals/my")
+public List<Rental> getMyRentals() {
+    return rentalService.getMyRentals();
+}
+@PutMapping("/api/rentals/{id}/cancel")
+public ResponseEntity<Rental> cancelRental(@PathVariable int id) {
+    Rental rental = rentalService.cancelRental(id);
+    return ResponseEntity.ok(rental);
+}
 }

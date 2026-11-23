@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,6 +49,21 @@ public class CustomerController {
 	public ResponseEntity<Void> deleteCustomer(@PathVariable int id){
 		customerService.deleteCustomer(id);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+	@GetMapping("/api/customers/me")
+	@Operation(summary = "Get my customer profile")
+	public ResponseEntity<Customer> getMyProfile() {
+	    Customer customer = customerService.getMyProfile();
+	    return ResponseEntity.ok(customer);
+	}
+
+	@PutMapping("/api/customers/me")
+	@Operation(summary = "Update my customer profile")
+	public ResponseEntity<Customer> updateMyProfile(
+	        @Valid @RequestBody Customer customer) {
+	    Customer updatedCustomer =
+	            customerService.updateMyProfile(customer);
+	    return ResponseEntity.ok(updatedCustomer);
 	}
 	
 }

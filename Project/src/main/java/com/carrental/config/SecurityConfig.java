@@ -1,7 +1,9 @@
+
 package com.carrental.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -30,50 +32,61 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
 
-            	    .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
 
-            	    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
-            	    // Public car browsing
-            	    .requestMatchers(
-            	        org.springframework.http.HttpMethod.GET,
-            	        "/api/cars/**"
-            	    ).hasAnyRole("CUSTOMER", "ADMIN")
+                // Car management
+                .requestMatchers(HttpMethod.GET, "/api/cars/**")
+                    .hasAnyRole("CUSTOMER", "ADMIN")
 
-            	    // Admin-only car management
-            	    .requestMatchers(
-            	        org.springframework.http.HttpMethod.POST,
-            	        "/api/cars"
-            	    ).hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/cars")
+                    .hasRole("ADMIN")
 
-            	    .requestMatchers(
-            	        org.springframework.http.HttpMethod.DELETE,
-            	        "/api/cars/**"
-            	    ).hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/cars/**")
+                    .hasRole("ADMIN")
 
-            	    // Admin-only rental management
-            	    .requestMatchers("/api/rentals").hasRole("ADMIN")
+                // Rental management
+                .requestMatchers(HttpMethod.GET, "/api/rentals")
+                    .hasRole("ADMIN")
 
-            	    .requestMatchers(
-            	        org.springframework.http.HttpMethod.PUT,
-            	        "/api/rentals/*/return"
-            	    ).hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/rentals")
+                    .authenticated()
 
-            	    .requestMatchers(
-            	        org.springframework.http.HttpMethod.GET,
-            	        "/api/rentals/utilisation/**"
-            	    ).hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/rentals/*/return")
+                    .hasRole("ADMIN")
 
-            	    .requestMatchers(
-            	        org.springframework.http.HttpMethod.DELETE,
-            	        "/api/rentals/**"
-            	    ).hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/rentals/utilisation/**")
+                    .hasRole("ADMIN")
 
-            	    // Remaining rental operations require login for now
-            	    .requestMatchers("/api/rentals/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/rentals/**")
+                    .hasRole("ADMIN")
 
-            	    .anyRequest().authenticated()
-            	)
+                .requestMatchers("/api/rentals/**")
+                    .authenticated()
+
+                // Customer profile - authenticated users
+                .requestMatchers(HttpMethod.GET, "/api/customers/me")
+                    .authenticated()
+
+                .requestMatchers(HttpMethod.PUT, "/api/customers/me")
+                    .authenticated()
+
+                // Admin-only customer management
+                .requestMatchers(HttpMethod.POST, "/api/customers")
+                    .hasRole("ADMIN")
+
+                .requestMatchers(HttpMethod.GET, "/api/customers")
+                    .hasRole("ADMIN")
+
+                .requestMatchers(HttpMethod.GET, "/api/customers/*")
+                    .hasRole("ADMIN")
+
+                .requestMatchers(HttpMethod.DELETE, "/api/customers/**")
+                    .hasRole("ADMIN")
+
+                .anyRequest().authenticated()
+            )
 
             .addFilterBefore(
                 jwtAuthenticationFilter,
