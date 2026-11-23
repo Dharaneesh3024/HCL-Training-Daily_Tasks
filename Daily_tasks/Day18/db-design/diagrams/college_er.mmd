@@ -1,0 +1,26 @@
+erDiagram
+    STUDENT ||--o{ REGISTRATION : registers
+    COURSE ||--o{ REGISTRATION : "is taken in"
+    FACULTY ||--o{ COURSE : teaches
+
+    STUDENT {
+        int student_id PK
+        string student_name
+        string email UK
+    }
+    FACULTY {
+        int faculty_id PK
+        string faculty_name
+        string email UK
+    }
+    COURSE {
+        string course_code PK
+        string title
+        decimal fee
+        int faculty_id FK
+    }
+    REGISTRATION {
+        int student_id PK, FK
+        string course_code PK, FK
+        string semester PK
+    }
